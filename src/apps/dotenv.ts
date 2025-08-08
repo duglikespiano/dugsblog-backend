@@ -6,3 +6,4 @@ export const mailService = process.env.MAIL_SERVICE;
 export const mailServiceAddress = process.env.MAIL_SERVICE_ADDRESS;
 export const mailServiceName = process.env.MAIL_SERVICE_NAME;
 export const mailServicePassword = process.env.MAIL_SERVICE_PASSWORD;
+export const bcryptSaltRound = process.env.BCRYPT_SALT_ROUND;
