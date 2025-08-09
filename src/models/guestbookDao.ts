@@ -13,7 +13,7 @@ interface Message extends RowDataPacket {
 import { RowDataPacket, ResultSetHeader } from 'mysql2';
 
 const fetchMessages = async () => {
-	const [result] = await database.query<RowDataPacket[]>('SELECT * FROM messages');
+	const [result] = await database.query<RowDataPacket[]>('SELECT * FROM messages ORDER BY created_at DESC');
 	return [...result];
 };
 
