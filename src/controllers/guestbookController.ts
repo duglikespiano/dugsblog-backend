@@ -11,8 +11,8 @@ const createMessage = async (req: Request, res: Response) => {
 	const { name, password, message } = req.body;
 	const hashedPassword = await hashPassword(password);
 	const queryResult = await guestbookService.createMessage(name, hashedPassword, message);
-	if (queryResult.affectedRows > 0) {
-		res.status(201).json({ message: 'MESSAGE CREATED' });
+	if ('id' in queryResult) {
+		res.status(201).json({ message: 'MESSAGE CREATED', id: queryResult.id, created_at: queryResult.created_at });
 	} else {
 		res.status(400).json({ message: 'QUERY FAILED' });
 	}

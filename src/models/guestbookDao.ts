@@ -1,4 +1,14 @@
 import { database } from '../db/database';
+import mysql from 'mysql2/promise';
+
+interface Message extends RowDataPacket {
+	id: number;
+	name: string;
+	password: string;
+	message: string;
+	created_at: Date;
+	updated_at: Date;
+}
 
 import { RowDataPacket, ResultSetHeader } from 'mysql2';
 
@@ -7,13 +17,32 @@ const fetchMessages = async () => {
 	return [...result];
 };
 
-const createMessage = async (name: string, hashedPassword: string, message: string): Promise<ResultSetHeader> => {
-	const [result] = await database.query<ResultSetHeader>(`INSERT INTO messages (name, password, message) VALUES (?, ?, ?)`, [
-		name,
-		hashedPassword,
-		message,
-	]);
-	return result;
+const createMessage = async (name: string, hashedPassword: string, message: string) => {
+	const connection = await database.getConnection();
+
+	try {
+		await connection.beginTransaction();
+		// Insert message
+		const [insertResult] = await database.query<mysql.ResultSetHeader>(
+			`INSERT INTO messages (name, password, message) VALUES (?, ?, ?)`,
+			[name, hashedPassword, message]
+		);
+
+		const insertId = insertResult.insertId;
+
+		// Select the inserted row
+		const [rows] = await database.query<Message[]>(`SELECT * FROM messages WHERE id = ?`, [insertId]);
+
+		// Commit transaction
+		await connection.commit();
+
+		// Return inserted row data
+		return rows[0];
+	} catch (error) {
+		// Rollback on error
+		await connection.rollback();
+		throw error;
+	}
 };
 
 export const getPasswordFromDB = async (messageId: number) => {
