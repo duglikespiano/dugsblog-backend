@@ -4,4 +4,8 @@ const fetchMessages = async () => {
 	return await guestbookDao.fetchMessages();
 };
 
-export default { fetchMessages };
+const createMessage = async (name: string, hashedPassword: string, message: string) => {
+	return await guestbookDao.createMessage(name, hashedPassword, message);
+};
+
+export default { fetchMessages, createMessage };
