@@ -16,4 +16,14 @@ const createMessage = async (name: string, hashedPassword: string, message: stri
 	return result;
 };
 
-export default { fetchMessages, createMessage };
+export const getPasswordFromDB = async (messageId: number) => {
+	const [rows] = await database.query(`SELECT password FROM messages WHERE id = ?`, [messageId]);
+	return (rows as { password: string }[])[0]?.password;
+};
+
+const deleteMessage = async (messageId: number): Promise<ResultSetHeader> => {
+	const [result] = await database.query<ResultSetHeader>(`DELETE FROM messages WHERE id = ?`, [messageId]);
+	return result;
+};
+
+export default { fetchMessages, createMessage, getPasswordFromDB, deleteMessage };

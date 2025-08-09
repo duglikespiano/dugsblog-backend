@@ -1,6 +1,11 @@
 import { Request, Response } from 'express';
 import guestbookService from '../services/guestbookService';
-import { hashPassword, checkPasswordsMatch } from '../functions/functions';
+import { hashPassword } from '../functions/functions';
+
+const fetchMessages = async (req: Request, res: Response) => {
+	const result = await guestbookService.fetchMessages();
+	res.status(200).json({ data: result });
+};
 
 const createMessage = async (req: Request, res: Response) => {
 	const { name, password, message } = req.body;
@@ -12,9 +17,15 @@ const createMessage = async (req: Request, res: Response) => {
 		res.status(400).json({ message: 'QUERY FAILED' });
 	}
 };
-const fetchMessages = async (req: Request, res: Response) => {
-	const result = await guestbookService.fetchMessages();
-	res.status(200).json({ data: result });
+
+const deleteMessage = async (req: Request, res: Response) => {
+	const { messageId, password } = req.body;
+	const queryResult = await guestbookService.deleteMessage(messageId, password);
+	if (queryResult?.affectedRows) {
+		res.status(204).json({ message: 'MESSAGE DELETED' });
+	} else {
+		res.status(400).json({ message: 'QUERY FAILED' });
+	}
 };
 
-export default { createMessage, fetchMessages };
+export default { createMessage, fetchMessages, deleteMessage };
