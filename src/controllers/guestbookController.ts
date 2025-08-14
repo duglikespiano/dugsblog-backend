@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import guestbookService from '../services/guestbookService';
 import { hashPassword } from '../functions/functions';
+import mailService from '../services/mailService';
 
 const fetchMessages = async (req: Request, res: Response) => {
 	const result = await guestbookService.fetchMessages();
@@ -12,6 +13,7 @@ const createMessage = async (req: Request, res: Response) => {
 	const hashedPassword = await hashPassword(password);
 	const queryResult = await guestbookService.createMessage(name, hashedPassword, message);
 	if ('id' in queryResult) {
+		mailService.notifyMessageCreation(name, message);
 		res.status(201).json({ message: 'MESSAGE CREATED', id: queryResult.id, created_at: queryResult.created_at });
 	} else {
 		res.status(400).json({ message: 'QUERY FAILED' });
