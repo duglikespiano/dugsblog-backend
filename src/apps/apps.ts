@@ -4,11 +4,11 @@ import cors from 'cors';
 const app = express();
 const corsOption = {
 	origin: '*',
-	optionSuccessStatus: 200,
+	optionsSuccessStatus: 200,
 };
 
-app.use(express.json());
 app.use(cors(corsOption));
+app.use(express.json());
 app.use(router);
 
 export default app;
