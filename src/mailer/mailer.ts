@@ -6,4 +6,7 @@ export const transporter = nodemailer.createTransport({
 		user: mailServiceAddress,
 		pass: mailServicePassword,
 	},
+	connectionTimeout: 5000,
+	greetingTimeout: 5000,
+	socketTimeout: 10000,
 });
